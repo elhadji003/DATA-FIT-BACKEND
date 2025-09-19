@@ -1,9 +1,11 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+import dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+dotenv.load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = ["*", ".onrender.com", "localhost", "127.0.0.1"]
@@ -60,22 +62,28 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database via env (Postgres) fallback sqlite
-if os.getenv("DATABASE_URL"):
-    import dj_database_url
+import sys
+import dj_database_url
+
+# === Base de données ===
+if 'test' in sys.argv:
+    # DB SQLite en mémoire pour les tests
     DATABASES = {
-        "default": dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600)
-    }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
         }
     }
-
+else:
+    # DB Neon/Postgres pour dev/prod
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('NEON_DATABASE'),
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
