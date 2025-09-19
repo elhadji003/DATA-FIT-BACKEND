@@ -1,18 +1,18 @@
 import os
-import sys
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
 import dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-dotenv.load_dotenv(os.path.join(BASE_DIR, '.env'))
-# --- Sécurité ---
+dotenv.load_dotenv(os.path.join(BASE_DIR, ".env"))
+
+# === Sécurité ===
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
 ALLOWED_HOSTS = ["*", ".onrender.com", "localhost", "127.0.0.1"]
 
-# --- Apps ---
+# === Applications ===
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -32,7 +32,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Whitenoise pour static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -61,32 +61,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# --- Base de données ---
-import sys
 # === Base de données ===
-if 'test' in sys.argv:
-    # DB SQLite en mémoire pour les tests
+if "test" in os.sys.argv:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",
         }
     }
 else:
-    # DB Neon/Postgres pour dev/prod
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
+        "default": dj_database_url.config(
+            default=os.getenv("NEON_DATABASE"),
             conn_max_age=600,
             ssl_require=True
         )
     }
 
-# --- Auth ---
+# === Auth ===
 AUTH_USER_MODEL = "users.User"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 
-# --- Password validation ---
+# === Password validation ===
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -94,24 +90,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# --- Internationalisation ---
+# === Internationalisation ===
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# --- Static & Media ---
+# === Static & Media ===
 STATIC_URL = "/static/"
-MEDIA_URL = "/media/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-STATICFILES_DIRS = []  # <- vide si tu n’as pas de /static local
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# --- CORS ---
+# === CORS ===
 CORS_ALLOW_ALL_ORIGINS = os.getenv("CORS_ALLOW_ALL", "1") == "1"
 
-# --- REST & JWT ---
+# === REST & JWT ===
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -129,7 +124,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# --- Email ---
+# === Email ===
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -138,7 +133,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-# --- Logging erreurs ---
+# === Logging ===
 ADMINS = [("Admin", EMAIL_HOST_USER)]
 LOGGING = {
     "version": 1,
