@@ -6,9 +6,9 @@ services:
     region: oregon
     branch: main
     buildCommand: |
-      rm -rf staticfiles &&
-      pip install -r requirements.txt &&
-      python manage.py migrate &&
+      rm -rf staticfiles
+      pip install -r requirements.txt
+      python manage.py migrate
       python manage.py collectstatic --noinput
     startCommand: gunicorn config.wsgi:application
     envVars:
@@ -21,8 +21,4 @@ services:
         sync: false
       - key: CORS_ALLOW_ALL
         value: "1"
-        sync: false
-      - key: EMAIL_HOST_USER
-        sync: false
-      - key: EMAIL_HOST_PASSWORD
         sync: false
