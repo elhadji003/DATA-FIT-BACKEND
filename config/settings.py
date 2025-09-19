@@ -3,11 +3,10 @@ import sys
 from pathlib import Path
 from datetime import timedelta
 import dj_database_url
-from dotenv import load_dotenv
-load_dotenv()
+import dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+dotenv.load_dotenv(os.path.join(BASE_DIR, '.env'))
 # --- Sécurité ---
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
@@ -63,26 +62,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 # --- Base de données ---
-if "test" in sys.argv:
+import sys
+# === Base de données ===
+if 'test' in sys.argv:
+    # DB SQLite en mémoire pour les tests
     DATABASES = {
-        "default": {"ENGINE": "django.db.backends.sqlite3", "NAME": ":memory:"}
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
 else:
-    DATABASE_URL = os.getenv("DATABASE_URL")
-    if not DATABASE_URL:
-        print("⚠️ WARNING: No DATABASE_URL set, fallback to SQLite")
-        DATABASES = {
-            "default": {
-                "ENGINE": "django.db.backends.sqlite3",
-                "NAME": BASE_DIR / "db.sqlite3",
-            }
-        }
-    else:
-        DATABASES = {
-            "default": dj_database_url.parse(
-                DATABASE_URL, conn_max_age=600, ssl_require=True
-            )
-        }
+    # DB Neon/Postgres pour dev/prod
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
 
 # --- Auth ---
 AUTH_USER_MODEL = "users.User"
