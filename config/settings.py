@@ -67,22 +67,18 @@ import sys
 import dj_database_url
 
 # === Base de données ===
-if 'test' in sys.argv:
-    # DB SQLite en mémoire pour les tests
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    print("WARNING: No DATABASE_URL environment variable set, using SQLite for dev")
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': ':memory:',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 else:
-    # DB Neon/Postgres pour dev/prod
     DATABASES = {
-        'default': dj_database_url.config(
-            default=os.getenv('DATABASE_URL'),
-            conn_max_age=600,
-            ssl_require=True
-        )
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600, ssl_require=True)
     }
 
 # Password validation
