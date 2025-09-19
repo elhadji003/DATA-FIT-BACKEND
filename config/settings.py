@@ -1,19 +1,12 @@
 import os
 from pathlib import Path
 from datetime import timedelta
-import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = ["*", ".onrender.com", "localhost", "127.0.0.1"]
-
-env = environ.Env(
-    DJANGO_DEBUG=(bool, False)
-)
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
-
 
 # Application definition
 
