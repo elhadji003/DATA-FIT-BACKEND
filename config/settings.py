@@ -79,7 +79,7 @@ else:
     # DB Neon/Postgres pour dev/prod
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.getenv('NEON_DATABASE'),
+            default=os.getenv('DATABASE_URL'),
             conn_max_age=600,
             ssl_require=True
         )
