@@ -1,0 +1,16 @@
+Bonjour {{ user.prenom }} {{ user.nom }},
+
+Bienvenue sur notre plateforme Data CFP FIT !
+
+Votre compte a été créé avec succès. Voici vos informations de connexion :
+
+Email : {{ user.email }}
+Mot de passe : {{ password }}
+
+Vous pouvez vous connecter ici : {{ login_url }}
+
+Nous vous recommandons de changer votre mot de passe après votre première connexion pour plus de sécurité.
+
+Bonne navigation !
+
+L'équipe de la plateforme de Data CFP FIT
