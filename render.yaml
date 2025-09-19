@@ -11,7 +11,7 @@ services:
       python manage.py collectstatic --noinput
     startCommand: gunicorn config.wsgi:application
     envVars:
-      - key: NEON_DATABASE
+      - key: DATABASE_URL
         sync: false
       - key: SECRET_KEY
         sync: false
