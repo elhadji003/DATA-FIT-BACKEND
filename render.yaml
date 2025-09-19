@@ -12,7 +12,7 @@ services:
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: DATABASE_URL
-        sync: false
+        sync: true
       - key: SECRET_KEY
         sync: false
       - key: DEBUG
