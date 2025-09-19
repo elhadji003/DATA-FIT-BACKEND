@@ -2,24 +2,23 @@ services:
   - type: web
     name: backend
     env: python
-    plan: free
-    region: oregon
-    branch: main
     buildCommand: |
       pip install -r requirements.txt
-      python manage.py migrate
       python manage.py collectstatic --noinput
-    startCommand: gunicorn config.wsgi:application
+      python manage.py migrate --noinput
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: SECRET_KEY
-        sync: false
-      - key: DATABASE_URL
-        sync: false   # ⚠️ doit être défini dans le dashboard Render avec l’URL Neon
+        value: "yonele17052003alinguerejesuisdevelopeurfullStackavec2ansexp"
       - key: DJANGO_DEBUG
         value: "0"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "backend.onrender.com localhost 127.0.0.1"
       - key: CORS_ALLOW_ALL
         value: "1"
       - key: EMAIL_HOST_USER
-        sync: false
+        value: "malickelhadji07@gmail.com"
       - key: EMAIL_HOST_PASSWORD
-        sync: false
+        value: "ylaw yzps mipx yden"
+      - key: DATABASE_URL
+        value: "postgresql://neondb_owner:npg_qGEMl2yeYvH3@ep-falling-scene-ad3hnqyp-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
