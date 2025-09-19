@@ -1,7 +1,13 @@
-# Python
+# Python / Django
 *.pyc
 *.pyo
 __pycache__/
+*.log
+*.pot
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/
 
 # Environnements virtuels
 venv/

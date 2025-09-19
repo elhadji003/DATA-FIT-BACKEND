@@ -70,7 +70,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database via env (Postgres) fallback sqlite
 if os.getenv("DATABASE_URL"):
     import dj_database_url
-    DATABASES = {"default": dj_database_url.parse(os.getenv("DATABASE_URL"))}
+    DATABASES = {
+        "default": dj_database_url.parse(os.getenv("DATABASE_URL"), conn_max_age=600)
+    }
 else:
     DATABASES = {
         "default": {
