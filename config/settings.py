@@ -11,6 +11,7 @@ dotenv.load_dotenv(os.path.join(BASE_DIR, ".env"))
 # --- Security ---
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
 DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
+# DEBUG = True
 ALLOWED_HOSTS = ["*", ".onrender.com", "localhost", "127.0.0.1"]
 
 # --- Installed apps ---
@@ -28,6 +29,8 @@ INSTALLED_APPS = [
 
     # Local apps
     "users",
+    "programmes",
+    "importFichier",
 ]
 
 # --- Middleware ---
@@ -83,6 +86,12 @@ else:
 # --- Auth ---
 AUTH_USER_MODEL = "users.User"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+# settings.py
+if DEBUG:
+    PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+    ]
+
 
 # --- Password validation ---
 AUTH_PASSWORD_VALIDATORS = [
@@ -109,6 +118,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
 # Whitenoise pour servir les fichiers statiques en prod
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
@@ -121,6 +131,10 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "EXCEPTION_HANDLER": "rest_framework.views.exception_handler",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+
 }
 
 SIMPLE_JWT = {
@@ -145,14 +159,37 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # --- Logging erreurs ---
 ADMINS = [("Admin", EMAIL_HOST_USER)]
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "mail_admins": {"level": "ERROR", "class": "django.utils.log.AdminEmailHandler"},
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
     },
-    "loggers": {
-        "django.request": {"handlers": ["mail_admins"], "level": "ERROR", "propagate": True},
-    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
 }
+
+if os.getenv("DJANGO_ENV") == "prod":
+    PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.Argon2PasswordHasher",
+        "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+        "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+        "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    ]
+else:  # local/dev
+    PASSWORD_HASHERS = [
+        "django.contrib.auth.hashers.MD5PasswordHasher",
+        "django.contrib.auth.hashers.Argon2PasswordHasher",
+        "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+        "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+        "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

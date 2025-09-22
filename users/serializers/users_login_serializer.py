@@ -1,16 +1,15 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt import serializers
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+class FastTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = 'email'
 
     def validate(self, attrs):
         email = attrs.get("email")
         password = attrs.get("password")
         User = get_user_model()
-
         error_msg = "Email ou mot de passe incorrect."
 
         try:
@@ -25,9 +24,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             raise serializers.ValidationError(
                 "Votre compte a été désactivé, veuillez contacter l’administrateur."
             )
-        
-        user.is_online = True
-        user.save(update_fields=["is_online"])
 
         # Création du JWT via SimpleJWT
         data = super().validate({
@@ -35,12 +31,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             'password': password
         })
 
-        # Ajout des infos utilisateur
+        # Ajout des infos utilisateur sans bloquer
         data['user'] = {
             'id': user.id,
             'email': user.email,
             'role': user.role,
             'full_name': f"{user.prenom} {user.nom}".strip(),
-            'avatar': user.avatar.url if user.avatar else None,
         }
+
         return data

@@ -43,15 +43,17 @@
       <h2>Bonjour {{ user.prenom }} {{ user.nom }},</h2>
       <p>Bienvenue sur notre plateforme des CFPT de Thiés !</p>
 
-
       <p>
-        Votre compte a été créé avec succès. Voici vos informations de connexion
-        :
+        Votre compte établissement a été créé avec succès. Voici les informations de votre compte pour 
+        l’établissement <strong>{{ etab_profile.nom_etablissement }}</strong> :
       </p>
 
       <ul>
         <li><strong>Email :</strong> {{ user.email }}</li>
         <li><strong>Mot de passe :</strong> {{ password }}</li>
+        {% if etab_profile.departement %}
+        <li><strong>Département :</strong> {{ etab_profile.departement }}</li>
+        {% endif %}
       </ul>
 
       <p>Vous pouvez vous connecter en cliquant sur le bouton ci-dessous :</p>

@@ -7,10 +7,15 @@ from django.conf.urls.static import static
 def home(request):
     return JsonResponse({"message": "Bienvenue sur l’API Data-Fit 🚀"})
 
+path('api/imports/', include('importFichier.urls')),
+
 urlpatterns = [
     path("", home),
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
+    path('api/programmes/', include('programmes.urls')),
+    path('api/fichiers/', include('importFichier.urls')),
+
 ] 
 
 if settings.DEBUG:

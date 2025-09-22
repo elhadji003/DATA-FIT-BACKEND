@@ -1,0 +1,17 @@
+Bonjour {{ user.prenom }} {{ user.nom }},
+
+Bienvenue sur notre plateforme des CFPT de Thiés !
+
+Votre compte établissement a été créé avec succès. Voici les informations de votre compte pour l’établissement {{ etab_profile.nom_etablissement }} :
+
+Email : {{ user.email }}
+Mot de passe : {{ password }}
+{% if etab_profile.departement %}Département : {{ etab_profile.departement }}{% endif %}
+
+Vous pouvez vous connecter en cliquant sur le lien suivant :
+{{ login_url }}
+
+Nous vous recommandons de changer votre mot de passe après votre première connexion pour plus de sécurité.
+
+L'équipe de la plateforme des CFPT de Thiés
+Si vous avez des questions, n'hésitez pas à nous contacter.

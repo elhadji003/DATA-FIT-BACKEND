@@ -9,32 +9,31 @@ import threading
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = [
-            'prenom', 'nom', 'email', 'phone', 'avatar', 'nom_etablissement'
-        ]
+        fields = ["prenom", "nom", "email", "phone"]
 
     def validate(self, data):
         email = data.get("email")
         phone = data.get("phone")
 
         if email and User.objects.filter(email=email).exists():
-            raise serializers.ValidationError({'email': "Cet email est déjà utilisé."})
+            raise serializers.ValidationError({"email": "Cet email est déjà utilisé."})
         if phone and User.objects.filter(phone=phone).exists():
-            raise serializers.ValidationError({'phone': "Ce numéro de téléphone est déjà utilisé."})
+            raise serializers.ValidationError({"phone": "Ce numéro de téléphone est déjà utilisé."})
 
         return data
 
     def create(self, validated_data):
-        # Génération du mot de passe automatique
-        random_password = get_random_string(length=10)
+        # Génération d’un mot de passe aléatoire sécurisé
+        random_password = get_random_string(length=12)
 
+        # Création du user
         user = User.objects.create_user(
-            role='user',
+            role="user",
             password=random_password,
             **validated_data
         )
 
-        # Envoi de l'email en arrière-plan
+        # Envoi de l’email en arrière-plan
         threading.Thread(target=self.send_welcome_email, args=(user, random_password)).start()
 
         return user
@@ -44,7 +43,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         from_email = settings.DEFAULT_FROM_EMAIL
         to_email = [user.email]
 
-        login_url = "http://localhost:5173/login"
+        # URL du login à adapter selon l’environnement
+        login_url = "https://data-fit-frontend.vercel.app/login/"
 
         context = {
             "user": user,

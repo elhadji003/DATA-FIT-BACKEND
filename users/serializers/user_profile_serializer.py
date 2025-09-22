@@ -21,7 +21,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "phone",
             "role",
             "avatar",
-            "nom_etablissement",
             "is_online",
             "created_at",
         ]
@@ -42,5 +41,4 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             "nom",
             "phone",
             "avatar",
-            "nom_etablissement",
         ]

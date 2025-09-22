@@ -34,9 +34,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     prenom = models.CharField(max_length=30, blank=True)
     nom = models.CharField(max_length=30, blank=True)
     email = models.EmailField(unique=True)
-
-    nom_etablissement = models.CharField(max_length=100, blank=True)
-
     phone_validator = RegexValidator(
         regex=r'^\+?1?\d{9,15}$',
         message="Le numéro doit être au format : '+999999999'. Jusqu'à 15 chiffres autorisés."
@@ -78,3 +75,4 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Utilisateur"
         verbose_name_plural = "Utilisateurs"
         ordering = ["id"]
+

@@ -1,6 +1,6 @@
 Bonjour {{ user.prenom }} {{ user.nom }},
 
-Bienvenue sur notre plateforme Data CFP FIT !
+Bienvenue sur notre plateforme des CFPT de Thiés !
 
 Votre compte a été créé avec succès. Voici vos informations de connexion :
 
@@ -13,4 +13,4 @@ Nous vous recommandons de changer votre mot de passe après votre première conn
 
 Bonne navigation !
 
-L'équipe de la plateforme de Data CFP FIT
+L'équipe de la plateforme des CFPT de Thiés
