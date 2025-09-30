@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .serializers import CandidatureSerializer, NotificationSerializer
 from rest_framework.decorators import api_view
+from rest_framework.pagination import PageNumberPagination
+
 
 
 # views.py
@@ -22,8 +24,6 @@ class CandidatureCreateView(generics.CreateAPIView):
             message=f"Nouvelle candidature reçue de {candidature.nom} {candidature.prenom}"
         )
 
-
-
 class CandidatureListView(generics.ListAPIView):
     queryset = Candidature.objects.all().order_by("-date_postule")
     serializer_class = CandidatureSerializer
@@ -31,8 +31,14 @@ class CandidatureListView(generics.ListAPIView):
 class CandidatureParEtablissementView(APIView):
     def get(self, request, etab_id):
         candidatures = Candidature.objects.filter(etablissement_id=etab_id).order_by("-date_postule")
-        serializer = CandidatureSerializer(candidatures, many=True)
-        return Response(serializer.data)
+        
+        # Pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 10  # tu peux changer le nombre par page
+        paginated_qs = paginator.paginate_queryset(candidatures, request)
+
+        serializer = CandidatureSerializer(paginated_qs, many=True)
+        return paginator.get_paginated_response(serializer.data)
     
 class CandidatureDetailView(generics.RetrieveAPIView):
     queryset = Candidature.objects.all().order_by('id')

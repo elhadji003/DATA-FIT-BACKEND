@@ -2,6 +2,8 @@ from django.contrib.auth.models import BaseUserManager, PermissionsMixin, Abstra
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
+from programmes.models import Filiere, Niveau
+from .etablissement import EtablissementProfile
 
 
 # ==================
@@ -29,7 +31,6 @@ class UserManager(BaseUserManager):
 # ==================
 # Custom User Model
 # ==================
-
 class User(AbstractBaseUser, PermissionsMixin):
     prenom = models.CharField(max_length=30, blank=True)
     nom = models.CharField(max_length=30, blank=True)
@@ -44,12 +45,29 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         validators=[phone_validator],
         verbose_name="Téléphone",
-        unique=False,  # ⚡ Unicité gérée dans ton serializer
+        unique=False,  # unicité gérée dans le serializer
     )
+
+    # ✅ Champs ForeignKey corrects
+    filiere = models.ForeignKey(
+        Filiere,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="users"
+    )
+    niveau = models.ForeignKey(
+        Niveau,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="users"
+    )
+
+    etablissement = models.ForeignKey(EtablissementProfile, on_delete=models.CASCADE, related_name="etudiants")  # 👈 obligatoire
 
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
 
-    # Rôles simples
     ROLE_CHOICES = (
         ("admin", "Admin"),
         ("user", "User"),
@@ -57,16 +75,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     role = models.CharField(max_length=15, choices=ROLE_CHOICES, default="user")
 
-    # Statut & gestion interne Django
     is_online = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)  # obligatoire pour AbstractBaseUser
-    is_staff = models.BooleanField(default=False)  # accès au Django admin
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["prenom", "nom"]  # phone retiré, car souvent optionnel
+    REQUIRED_FIELDS = ["prenom", "nom"]
 
     def __str__(self):
         return f"{self.prenom} {self.nom}".strip() or self.email
@@ -75,4 +92,3 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name = "Utilisateur"
         verbose_name_plural = "Utilisateurs"
         ordering = ["id"]
-

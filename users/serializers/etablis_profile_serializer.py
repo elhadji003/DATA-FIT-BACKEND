@@ -16,7 +16,6 @@ class EtablissProfileOnlySerializer(serializers.ModelSerializer):
     # Lecture : afficher les filières/niveaux détaillés
     filieres = FiliereSerializer(many=True, read_only=True)
     niveaux = NiveauSerializer(many=True, read_only=True)
-    logo_url = serializers.SerializerMethodField()
 
     # Écriture : permettre d’envoyer juste les IDs pour update
     filieres_ids = serializers.PrimaryKeyRelatedField(
@@ -43,16 +42,8 @@ class EtablissProfileOnlySerializer(serializers.ModelSerializer):
             "filieres_ids",
             "niveaux_ids",
             "logo",
-            "logo_url",
         ]
 
-    def get_logo_url(self, obj):
-        request = self.context.get("request")
-        if obj.logo and request:
-            return request.build_absolute_uri(obj.logo.url)
-        elif obj.logo:
-            return obj.logo.url
-        return None
 
     def update(self, instance, validated_data):
         # Mise à jour des champs simples
@@ -70,3 +61,17 @@ class EtablissProfileOnlySerializer(serializers.ModelSerializer):
             instance.niveaux.set(niveaux)
 
         return instance
+
+class EtablissProfileLogoSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(source="user.email", read_only=True)
+
+    class Meta:
+        model = EtablissementProfile
+        fields = [
+            "id",
+            "nom_etablissement",
+            "email",
+            "departement",
+            "logo",
+            "created_at",
+        ]

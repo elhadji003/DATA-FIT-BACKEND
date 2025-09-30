@@ -3,7 +3,7 @@ from rest_framework import generics, permissions
 from rest_framework.permissions import AllowAny
 from ..models import User, EtablissementProfile
 from ..serializers.etablis_register_serializer import EtablisRegisterSerializer
-from ..serializers.etablis_profile_serializer import EtablissProfileOnlySerializer
+from ..serializers.etablis_profile_serializer import EtablissProfileOnlySerializer, EtablissProfileLogoSerializer
 
 
 # ==================
@@ -22,27 +22,6 @@ class EtablisRegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = EtablisRegisterSerializer
 
-
-# ===============
-    # Profile Etablissement
-# ===============
-class EtablissProfileView(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = EtablissProfileOnlySerializer
-
-    def get_object(self):
-        return EtablissementProfile.objects.get(user=self.request.user) 
-
-
-# =========================
-# Modifier Profile Etablissement
-# =========================
-class EtablissementProfileUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = EtablissementProfile.objects.all()
-    serializer_class = EtablissProfileOnlySerializer
-    permission_classes = [permissions.IsAuthenticated]
-    lookup_field = "id"
-
 # ===============
 # Listes des Etablissement
 # ===============
@@ -60,3 +39,19 @@ class EtablissementDetailView(generics.RetrieveAPIView):
     queryset = EtablissementProfile.objects.all()
     serializer_class = EtablissProfileOnlySerializer
     lookup_field = "id"
+
+
+# =================================
+# Modifiier le Profile Etablissement
+# =================================
+class EtablissementProfileView(generics.RetrieveUpdateAPIView):
+    """
+    GET: Récupère les infos de l'établissement connecté
+    PATCH/PUT: Met à jour le nom, département et logo
+    """
+    serializer_class = EtablissProfileLogoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        # On retourne le profile lié à l'utilisateur connecté
+        return EtablissementProfile.objects.get(user=self.request.user)

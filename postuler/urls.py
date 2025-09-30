@@ -10,7 +10,7 @@ from .views import (
     NotificationListView,
     mark_notifications_as_read
 )
-from .view.stats_filiere_view import StatsFiliereView
+from .view.stats_filiere_view import StatsFiliereParEtablissementView
 
 urlpatterns = [
     path("candidatures/", CandidatureListView.as_view(), name="liste-candidatures"),
@@ -23,6 +23,6 @@ urlpatterns = [
     name='candidature-update-statut'),
     path("notifications/<int:etab_id>/", NotificationListView.as_view(), name="liste-notifs"),
     path("notifications/<int:etab_id>/mark-as-read/", mark_notifications_as_read, name="notif-mark-read"),
-    path("stats/filiere/", StatsFiliereView.as_view(), name="stats-filiere"),
+    path("stats/filiere/",StatsFiliereParEtablissementView.as_view(), name="stats-filiere"),
 
 ]
