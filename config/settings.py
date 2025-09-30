@@ -10,8 +10,8 @@ dotenv.load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # --- Security ---
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")
-DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
-# DEBUG = True
+# DEBUG = os.getenv("DJANGO_DEBUG", "0") == "1"
+DEBUG = True
 ALLOWED_HOSTS = ["*", ".onrender.com", "localhost", "127.0.0.1"]
 
 # --- Installed apps ---
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "users",
     "programmes",
     "importFichier",
+    "postuler",
 ]
 
 # --- Middleware ---

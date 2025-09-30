@@ -28,6 +28,7 @@ class ChangePasswordView(APIView):
     
 
 class RequestPasswordResetView(APIView):
+    permission_classes = []
     def post(self, request):
         email = request.data.get("email")
         try:
@@ -36,7 +37,6 @@ class RequestPasswordResetView(APIView):
             token = PasswordResetTokenGenerator().make_token(user)
 
             reset_link = f"http://localhost:5173/reset-password/{uid}/{token}"
-            # reset_link = f"https://gestion-scolaire.vercel.app/reset-password/{uid}/{token}"
 
             context = {
                 'user_prenom': user.prenom or '',
@@ -61,6 +61,7 @@ class RequestPasswordResetView(APIView):
             return Response({"error": "Aucun compte associé à cet email."}, status=status.HTTP_404_NOT_FOUND)
 
 class PasswordResetConfirmView(APIView):
+    permission_classes = []
     def post(self, request, uidb64, token):
         try:
             uid = force_str(urlsafe_base64_decode(uidb64))

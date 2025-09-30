@@ -15,6 +15,8 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/programmes/', include('programmes.urls')),
     path('api/fichiers/', include('importFichier.urls')),
+    path("api/postuler/", include("postuler.urls")),
+    
 
 ] 
 

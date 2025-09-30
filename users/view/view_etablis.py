@@ -31,8 +31,17 @@ class EtablissProfileView(generics.RetrieveAPIView):
     serializer_class = EtablissProfileOnlySerializer
 
     def get_object(self):
-        return EtablissementProfile.objects.get(user=self.request.user)
-    
+        return EtablissementProfile.objects.get(user=self.request.user) 
+
+
+# =========================
+# Modifier Profile Etablissement
+# =========================
+class EtablissementProfileUpdateView(generics.RetrieveUpdateAPIView):
+    queryset = EtablissementProfile.objects.all()
+    serializer_class = EtablissProfileOnlySerializer
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "id"
 
 # ===============
 # Listes des Etablissement
@@ -42,3 +51,12 @@ class EtablissementListView(generics.ListAPIView):
     queryset = EtablissementProfile.objects.all()
     serializer_class = EtablissProfileOnlySerializer
     pagination_class = EtablissementPagination
+
+# ================
+# Etablissement ID
+# ================
+class EtablissementDetailView(generics.RetrieveAPIView):
+    permission_classes = [permissions.AllowAny]  # ou IsAuthenticated si nécessaire
+    queryset = EtablissementProfile.objects.all()
+    serializer_class = EtablissProfileOnlySerializer
+    lookup_field = "id"

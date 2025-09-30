@@ -2,12 +2,10 @@ from rest_framework import serializers
 from ..models import EtablissementProfile
 from programmes.models import Filiere, Niveau
 
-
 class FiliereSerializer(serializers.ModelSerializer):
     class Meta:
         model = Filiere
         fields = ["id", "nom"]
-
 
 class NiveauSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,9 +13,24 @@ class NiveauSerializer(serializers.ModelSerializer):
         fields = ["id", "nom"]
 
 class EtablissProfileOnlySerializer(serializers.ModelSerializer):
-    filieres = FiliereSerializer(many=True, read_only=True, source="programmes.filieres")
-    niveaux = NiveauSerializer(many=True, read_only=True, source="programmes.niveaux")
+    # Lecture : afficher les filières/niveaux détaillés
+    filieres = FiliereSerializer(many=True, read_only=True)
+    niveaux = NiveauSerializer(many=True, read_only=True)
     logo_url = serializers.SerializerMethodField()
+
+    # Écriture : permettre d’envoyer juste les IDs pour update
+    filieres_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Filiere.objects.all(),
+        many=True,
+        write_only=True,
+        required=False
+    )
+    niveaux_ids = serializers.PrimaryKeyRelatedField(
+        queryset=Niveau.objects.all(),
+        many=True,
+        write_only=True,
+        required=False
+    )
 
     class Meta:
         model = EtablissementProfile
@@ -27,9 +40,11 @@ class EtablissProfileOnlySerializer(serializers.ModelSerializer):
             "departement",
             "filieres",
             "niveaux",
+            "filieres_ids",
+            "niveaux_ids",
+            "logo",
             "logo_url",
         ]
-        read_only_fields = fields
 
     def get_logo_url(self, obj):
         request = self.context.get("request")
@@ -38,3 +53,20 @@ class EtablissProfileOnlySerializer(serializers.ModelSerializer):
         elif obj.logo:
             return obj.logo.url
         return None
+
+    def update(self, instance, validated_data):
+        # Mise à jour des champs simples
+        filieres = validated_data.pop("filieres_ids", None)
+        niveaux = validated_data.pop("niveaux_ids", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Mise à jour des M2M
+        if filieres is not None:
+            instance.filieres.set(filieres)
+        if niveaux is not None:
+            instance.niveaux.set(niveaux)
+
+        return instance
