@@ -15,7 +15,6 @@ class UserProfileView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
 
-
 # ==================
 # Mettre à jour son profil
 # ==================

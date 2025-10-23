@@ -36,15 +36,22 @@ class EtablisRegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         # --- Création profil établissement ---
-        EtablissementProfile.objects.create(
+        etab = EtablissementProfile.objects.create(
             user=user,
             nom_etablissement=nom_etablissement,
             departement=departement,
             logo=logo
         )
 
-        # --- Email de bienvenue en arrière-plan ---
-        threading.Thread(target=self.send_welcome_email, args=(user, random_password)).start()
+        # --- Associer le user à son établissement ---
+        user.etablissement = etab
+        user.save()
+
+        # --- Email de bienvenue ---
+        threading.Thread(
+            target=self.send_welcome_email,
+            args=(user, random_password)
+        ).start()
 
         return user
 

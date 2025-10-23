@@ -10,6 +10,7 @@ import threading
 class UserRegisterSerializer(serializers.ModelSerializer):
     filiere_nom = serializers.SerializerMethodField()
     niveau_nom = serializers.SerializerMethodField()
+    etablissement_nom = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -17,7 +18,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "id", "prenom", "nom", "email", "phone",
             "filiere", "filiere_nom",
             "niveau", "niveau_nom",
-            "etablissement"
+            "etablissement_nom", "etablissement"
         ]
 
     def get_filiere_nom(self, obj):
@@ -25,6 +26,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def get_niveau_nom(self, obj):
         return obj.niveau.nom if obj.niveau else None
+    
+    def get_etablissement_nom(self, obj):
+        return obj.etablissement.nom_etablissement if obj.etablissement else None
 
     def validate(self, data):
         email = data.get("email")
@@ -58,7 +62,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         context = {
             "user": user,
             "password": password,
-            "login_url": login_url
+            "login_url": login_url,
+            "etablissement": user.nom_etablissement
         }
 
         text_content = render_to_string("emails/register_user.txt", context)

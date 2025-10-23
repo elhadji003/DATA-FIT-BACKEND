@@ -64,7 +64,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         related_name="users"
     )
 
-    etablissement = models.ForeignKey(EtablissementProfile, on_delete=models.CASCADE, related_name="etudiants")  # 👈 obligatoire
+    etablissement = models.ForeignKey(
+        EtablissementProfile,
+        on_delete=models.CASCADE,
+        related_name="etudiants",
+        null=True,
+        blank=True
+    )
+
 
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)
 

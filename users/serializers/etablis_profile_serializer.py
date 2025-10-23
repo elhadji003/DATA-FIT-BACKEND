@@ -64,6 +64,8 @@ class EtablissProfileOnlySerializer(serializers.ModelSerializer):
 
 class EtablissProfileLogoSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source="user.email", read_only=True)
+    filieres = FiliereSerializer(many=True, read_only=True)
+    niveaux = NiveauSerializer(many=True, read_only=True)
 
     class Meta:
         model = EtablissementProfile
@@ -72,6 +74,8 @@ class EtablissProfileLogoSerializer(serializers.ModelSerializer):
             "nom_etablissement",
             "email",
             "departement",
+            "filieres",
+            "niveaux",
             "logo",
             "created_at",
         ]
